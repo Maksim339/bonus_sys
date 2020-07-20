@@ -10,8 +10,8 @@ from crop_table import crop_table
 from box_extractions import box
 
 
-path = r'/home/maksim/PycharmProjects/bonus_sys/kbs'
-path1 = r'/home/maksim/PycharmProjects/bonus_sys/Rows'
+path = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\kbs'
+path1 = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\Rows'
 fds = sorted(os.listdir(path))
 fds1 = sorted(os.listdir(path1))
 
@@ -24,8 +24,16 @@ for image in fds:
         img = cv2.imread(os.path.join(path, image))
         align = align_kbs(img)
         crop = crop_table(align)
-        img = cv2.imread('output1.png', cv2.IMREAD_GRAYSCALE)
+        img = cv2.imread('output2.png', cv2.IMREAD_GRAYSCALE)
+        if img is None:
+            img = cv2.imread('output1.png', cv2.IMREAD_GRAYSCALE)
+        print(img.shape[0])
         box(img)
+        try:
+            os.remove('output1.png')
+            os.remove('output2.png')
+        except Exception as e:
+            print(e)
 a = 0
 for image1 in fds1:
     if re.match(r'\d', image1):

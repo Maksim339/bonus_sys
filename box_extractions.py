@@ -9,10 +9,10 @@ from homography import align_kbs
 import re
 
 def box(img):
-    path = r'/home/maksim/PycharmProjects/bonus_sys/kbs'
-    path1 = r'/home/maksim/PycharmProjects/bonus_sys/Rows'
+    path = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\kbs'
+    path1 = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\Rows'
 
-    image = img[50: ,580:660]
+    image = img[60: ,600:687]
     original = np.copy(image)
 
 

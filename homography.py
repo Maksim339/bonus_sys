@@ -7,7 +7,7 @@ from _datetime import datetime
 import time
 
 start_time = datetime.now()
-path1 = r'/home/maksim/PycharmProjects/bonus_sys/align'
+path1 = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\align'
 MAX_FEATURES = 10000000
 GOOD_MATCH_PERCENT = 0.15
 

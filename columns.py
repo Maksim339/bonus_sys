@@ -26,7 +26,7 @@ def col(img):
     crop_table(aligned)
     image = cv2.imread('output1.png', cv2.IMREAD_GRAYSCALE)
     # os.remove('output1.png')
-    image = img[55:, 580:660]
+    image = img[65:, 575:657]
     original = np.copy(image)
 
     (thresh, img_bin) = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
