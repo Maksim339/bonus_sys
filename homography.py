@@ -13,11 +13,11 @@ GOOD_MATCH_PERCENT = 0.15
 
 
 def align_kbs(im1):
-    im2 = cv2.imread('kbs6.jpg')
-    image1 = cv2.resize(im1, (905,1280))
-    image2 = cv2.resize(im2, (905,1280))
-    im1Gray = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-    im2Gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+    im2 = cv2.imread('templt.png')
+    # image1 = cv2.resize(im1, (905,1280))
+    # image2 = cv2.resize(im2, (905,1280))
+    im1Gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+    im2Gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
 
     orb = cv2.ORB_create(MAX_FEATURES)
     keypoints1, descriptors1 = orb.detectAndCompute(im1Gray, None)
@@ -76,5 +76,7 @@ def align_work_list(im1):
     return im1Reg
 
 
+file = cv2.imread('needle.png')
+align_kbs(file)
 
 
