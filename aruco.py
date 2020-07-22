@@ -1,9 +1,10 @@
 import cv2
-from cv2 import aruco
+import cv2.aruco as aruco
 import matplotlib.pyplot as plt
 import  matplotlib as mpl
 import numpy as np
 import re
+
 
 
 
@@ -22,8 +23,7 @@ for i in range(1, nx*ny+1):
 plt.savefig("markers.jpg")
 
 
-frame = cv2.imread('lox.jpg')
-# frame = image[70:700, 50:700]
+frame = cv2.imread('lox.png')
 # cv2.imwrite('frame.jpg', fr)
 # frame = cv2.imread('frame.jpg')
 original = np.copy(frame)
@@ -132,5 +132,6 @@ def four_point_transform(image, pts):
 
 
 warped = four_point_transform(frame_markers, pts)
-print(order_points(pts))
+# print(order_points(pts))
+print(id1)
 cv2.imwrite('warped.jpg', warped)
