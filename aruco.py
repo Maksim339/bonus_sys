@@ -5,6 +5,7 @@ import  matplotlib as mpl
 import numpy as np
 import re
 import os
+from defs import four_point_transform, rotateImage
 import random
 
 
@@ -65,20 +66,6 @@ for i in range(1, nx*ny+1):
     ax.axis("off")
 plt.savefig("markers2.jpg")
 
-
-
-
-#
-# dict = aruco.Dictionary_get(aruco.DICT_6X6_1000)
-# fig = plt.figure()
-# nx = 4
-# ny = 3
-# for i in range(1, nx*ny+1):
-#     ax = fig.add_subplot(ny,nx, i)
-#     img = aruco.drawMarker(dict,i, 700)
-#     # plt.imshow(img, cmap = mpl.cm.gray, interpolation = "nearest")
-#     ax.axis("off")
-# plt.savefig("markers1.jpg")
 
 for img in fds:
     if re.search('.jpg', img):
@@ -168,42 +155,6 @@ for img in fds:
 
             pts = [top_left, top_right, bottom_left, bottom_right]
 
-
-
-            def order_points(pts):
-                src_pts = np.zeros((4, 2), dtype = 'float32')
-                # print(pts)
-                s = np.sum(pts, axis=1)
-                src_pts[0] = pts[np.argmin(s)]
-                src_pts[2] = pts[np.argmax(s)]
-
-                diff = np.diff(pts, axis=1)
-                src_pts[1] = pts[np.argmin(diff)]
-                src_pts[3] = pts[np.argmax(diff)]
-                return src_pts
-
-
-            def four_point_transform(image, pts):
-                rect = order_points(pts)
-                (tl, tr, br, bl) = rect
-
-                widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
-                widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
-                maxWidth = max(int(widthA), int(widthB))
-
-                heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
-                heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
-                maxHeight = max(int(heightA), int(heightB))
-
-                dst = np.array([
-                    [0, 0],
-                    [maxWidth - 1, 0],
-                    [maxWidth - 1, maxHeight - 1],
-                    [0, maxHeight - 1]], dtype="float32")
-
-                M = cv2.getPerspectiveTransform(rect, dst)
-                warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-                return warped
 
 
             table = four_point_transform(frame_markers, pts)
