@@ -45,6 +45,7 @@ bottom = (777, 364)
 print(type(top))
 cv2.rectangle(img, top, bottom, line_color, line_type)
 
+
 cv2.imwrite('test.jpg', img)
 
 

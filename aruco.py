@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import  matplotlib as mpl
 import numpy as np
 import re
+import os
+import random
+path1 = r'/home/maksim/PycharmProjects/bonus_sys/Rows'
+
 
 
 def rotateImage(image, angle):
@@ -33,8 +37,8 @@ for i in range(1, nx*ny+1):
 plt.savefig("markers1.jpg")
 
 
-image = cv2.imread('right_test.png')
-frame = rotateImage(image, -30)
+frame = cv2.imread('right_test1.jpg')
+# frame = rotateImage(image, -30)
 
 
 original = np.copy(frame)
@@ -150,13 +154,24 @@ def four_point_transform(image, pts):
 
     M = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-
     return warped
 
 
 warped = four_point_transform(frame_markers, pts)
-# print(order_points(pts))
-bonus = warped[47:, 531:605]
-cv2.imwrite('warped.jpg', warped)
-
+warped_normal = cv2.resize(warped, (729, 218))
+cv2.imwrite('warped.jpg', warped_normal)
+bonus = warped_normal[47:, 531:605]
 cv2.imwrite('bonus.jpg', bonus)
+
+
+
+
+#########################################
+#########################################
+#########################################
+#########################################
+#########################################
+#########################################
+#########################################
+
+
