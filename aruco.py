@@ -6,11 +6,10 @@ import numpy as np
 import re
 import os
 from defs import four_point_transform, rotateImage
-import random
 
 
-path = r'/home/maksim/PycharmProjects/bonus_sys'
-path1 = r'/home/maksim/PycharmProjects/bonus_sys/from'
+path = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys'
+path1 = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\from'
 fds = os.listdir('from')
 
 
@@ -72,7 +71,8 @@ for img in fds:
         frame_markers = None
         try:
 
-            frame = cv2.imread(os.path.join(path1, img))
+            image = cv2.imread(os.path.join(path1, img))
+            frame = cv2.resize(image, (905, 1280))
             original = np.copy(frame)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # blur = cv2.GaussianBlur(gray, (3,3), 0)
@@ -158,13 +158,13 @@ for img in fds:
 
 
             table = four_point_transform(frame_markers, pts)
-            table_normal = cv2.resize(table, (729, 218))
-            print(type(table_normal))
-            cv2.imwrite((os.path.join(tables, str('table_') + str(a)) + '.jpg'), table_normal)
-            bonus = table_normal[47:, 531:605]
+            cv2.imwrite((os.path.join(tables, str('table_') + str(a)) + '.jpg'), table)
+            bonus = table[53:, 608:696]
             cv2.imwrite((os.path.join(bonus_box, str('bonus_') + str(b)) + '.jpg'), bonus)
             a += 1
             b += 1
+
+
 
         except Exception as e:
             print(e)
