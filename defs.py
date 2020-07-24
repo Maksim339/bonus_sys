@@ -54,9 +54,6 @@ def rotateImage(image, angle):
     return rotated
 
 
-
-
-
 def remove(tables, errors, bonus_box):
 
     fds = os.listdir(tables)
@@ -89,7 +86,7 @@ def filtration(path):
     fds2 = os.listdir(path)
 
     for img in fds2:
-        if re.search('.jpg', img):
+        if re.search('bonus', img):
             try:
                 image = cv2.imread(os.path.join(path, img))
                 if image.shape[0] > 50 or image.shape[0] < 40:
@@ -151,4 +148,3 @@ def rows(path1):
 
             if image.shape[0] > 50:
                 os.remove(os.path.join(path1, img))
-

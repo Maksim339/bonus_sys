@@ -8,8 +8,8 @@ import os
 from defs import four_point_transform, remove, rows, filtration
 
 
-path = r'/home/maksim/PycharmProjects/bonus_sys'
-path1 = r'/home/maksim/PycharmProjects/bonus_sys/from'
+path = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys'
+path1 = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\from'
 fds = os.listdir('from')
 
 
@@ -20,6 +20,11 @@ c = 0
 errors = None
 bonus_box = None
 tables = None
+
+top_left = None
+top_right = None
+bottom_left = None
+bottom_right = None
 
 try:
     tables = os.path.join(path, 'for_tables')
@@ -85,13 +90,6 @@ for img in fds:
             frame_markers = aruco.drawDetectedMarkers(original, corners, ids)
             # cv2.imwrite('test.jpg', frame_markers)
 
-
-
-
-
-
-
-
             reg = re.compile('[] []')
             id_marker = reg.sub('', str(ids)).split()
             corner_id1 = int(id_marker.index('1'))
@@ -99,71 +97,111 @@ for img in fds:
             cornet_id3 = int(id_marker.index('3'))
             corner_id4 = int(id_marker.index('4'))
 
+            if re.search('worker_list', img):
 
+                # coord top left
+                id1 = corners[corner_id1]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id1[0,2]) )
+                top_left1 = int(count.split()[0])
+                top_left2 = int(count.split()[1])
+                top_left = (int(top_left1), int(top_left2))
 
+                # coord top right
+                id2 = corners[corner_id2]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id2[0,3]) )
+                top_right1 = int(count.split()[0])
+                top_right2 = int(count.split()[1])
+                top_right = (int(top_right1), int(top_right2))
 
-            ##coord top left
-            id1 = corners[corner_id1]
-            reg = re.compile('[].[]')
-            count = reg.sub('', str(id1[0,3]) )
-            top_left1 = int(count.split()[0])
-            top_left2 = int(count.split()[1])
-            top_left = (int(top_left1), int(top_left2))
-            # print(corners)
-            # print(top_left)
+                # coord bottom left
+                id3 = corners[cornet_id3]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id3[0,1]) )
+                bottom_left1 = int(count.split()[0])
+                bottom_left2 = int(count.split()[1])
+                bottom_left = (int(bottom_left1), int(bottom_left2))
 
+                # coord bottom right
+                id4 = corners[corner_id4]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id4[0,0]) )
+                bottom_right1 = int(count.split()[0])
+                bottom_right2 = int(count.split()[1])
+                bottom_right = (int(bottom_right1), int(bottom_right2))
 
+                # print('top_left', top_left)
+                # print('top_right', top_right)
+                # print('bottom_left', bottom_left)
+                # print('bottom_right', bottom_right)
 
+                pts = [top_left, top_right, bottom_left, bottom_right]
 
-            ###coords top right
-            id2 = corners[corner_id2]
-            reg = re.compile('[].[]')
-            count = reg.sub('', str(id2[0,2]) )
-            top_right1 = int(count.split()[0])
-            top_right2 = int(count.split()[1])
-            top_right = (int(top_right1), int(top_right2))
-            # print(id2)
-            # print(top_right)
+                table = four_point_transform(frame_markers, pts)
+                table_normal = cv2.resize(table, (785, table.shape[0]))
+                cv2.imwrite(str('table_') + str(a) + '.jpg', table)
+                first_bon = table_normal[:65, :90]
+                second_bon = table_normal[:65, 395:484]
+                cv2.imwrite((os.path.join(bonus_box, str('work_b_1_') + str(b)) + '.jpg'), first_bon)
+                cv2.imwrite((os.path.join(bonus_box, str('work_b_2_') + str(b)) + '.jpg'), second_bon)
+                a += 1
+                b += 1
 
+            if re.search('kbs', img):
 
+                # coord top left
+                id1 = corners[corner_id1]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id1[0, 3]))
+                top_left1 = int(count.split()[0])
+                top_left2 = int(count.split()[1])
+                top_left = (int(top_left1), int(top_left2))
+                # print(corners)
+                # print(top_left)
 
+                # coord top right
+                id2 = corners[corner_id2]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id2[0, 2]))
+                top_right1 = int(count.split()[0])
+                top_right2 = int(count.split()[1])
+                top_right = (int(top_right1), int(top_right2))
+                # print(id2)
+                # print(top_right)
 
-            ###coords bottom left
-            id3 = corners[cornet_id3]
-            reg = re.compile('[].[]')
-            count = reg.sub('', str(id3[0,0]) )
-            bottom_left1 = int(count.split()[0])
-            bottom_left2 = int(count.split()[1])
-            bottom_left = (int(bottom_left1), int(bottom_left2))
+                # coord bottom left
+                id3 = corners[cornet_id3]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id3[0, 0]))
+                bottom_left1 = int(count.split()[0])
+                bottom_left2 = int(count.split()[1])
+                bottom_left = (int(bottom_left1), int(bottom_left2))
 
+                # coord bottom right
+                id4 = corners[corner_id4]
+                reg = re.compile('[].[]')
+                count = reg.sub('', str(id4[0, 1]))
+                bottom_right1 = int(count.split()[0])
+                bottom_right2 = int(count.split()[1])
+                bottom_right = (int(bottom_right1), int(bottom_right2))
+                # print(bottom_right)
+                # print(id4)
 
+                # print('top_left', top_left)
+                # print('top_right', top_right)
+                # print('bottom_left', bottom_left)
+                # print('bottom_right', bottom_right)
+                pts = [top_left, top_right, bottom_left, bottom_right]
 
-
-            ###coords bottom right
-            id4 = corners[corner_id4]
-            reg = re.compile('[].[]')
-            count = reg.sub('', str(id4[0,1]) )
-            bottom_right1 = int(count.split()[0])
-            bottom_right2 = int(count.split()[1])
-            bottom_right = (int(bottom_right1), int(bottom_right2))
-            # print(bottom_right)
-            # print(id4)
-
-            # print('top_left', top_left)
-            # print('top_right', top_right)
-            # print('bottom_left', bottom_left)
-            # print('bottom_right', bottom_right)
-
-            pts = [top_left, top_right, bottom_left, bottom_right]
-
-            table = four_point_transform(frame_markers, pts)
-            cv2.imwrite((os.path.join(tables, str('table_') + str(a)) + '.jpg'), table)
-            bonus_normal = cv2.resize(table, (830, table.shape[0]))
-            # print(table.shape[0])
-            bonus = bonus_normal[53:, 605:695]
-            cv2.imwrite((os.path.join(bonus_box, str('bonus_') + str(b)) + '.jpg'), bonus)
-            a += 1
-            b += 1
+                table = four_point_transform(frame_markers, pts)
+                cv2.imwrite((os.path.join(tables, str('table_') + str(a)) + '.jpg'), table)
+                bonus_normal = cv2.resize(table, (830, table.shape[0]))
+                # print(table.shape[0])
+                bonus = bonus_normal[53:, 605:695]
+                cv2.imwrite((os.path.join(bonus_box, str('bonus_') + str(b)) + '.jpg'), bonus)
+                a += 1
+                b += 1
         except Exception as e:
             print(e)
             print('Marker isnt detect')
@@ -173,14 +211,5 @@ for img in fds:
 os.remove('markers2.jpg')
 
 rows(bonus_box)
+
 filtration(bonus_box)
-
-#########################################
-#########################################
-#########################################
-#########################################
-#########################################
-#########################################
-#########################################
-
-
