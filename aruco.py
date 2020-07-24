@@ -5,37 +5,34 @@ import  matplotlib as mpl
 import numpy as np
 import re
 import os
-from defs import four_point_transform
-from removing_folders import remove
-from rows import rows
-from filtration import filtration
-remove()
+from defs import four_point_transform, remove, rows, filtration
 
 
-
-path = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys'
-path1 = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys\from'
+path = r'/home/maksim/PycharmProjects/bonus_sys'
+path1 = r'/home/maksim/PycharmProjects/bonus_sys/from'
 fds = os.listdir('from')
 
 
 a = 0
 b = 0
 c = 0
+
 errors = None
 bonus_box = None
 tables = None
+
 try:
     tables = os.path.join(path, 'for_tables')
     os.mkdir(tables)
 except Exception as e:
     print(e)
 
-
 try:
     errors = os.path.join(path, 'for_errors')
     os.mkdir(errors)
 except Exception as e:
     print(e)
+    
 try:
     bonus_box = os.path.join(path, 'for_bonus')
     os.mkdir(bonus_box)
@@ -43,6 +40,7 @@ except Exception as e:
     print(e)
 
 
+remove(tables, errors, bonus_box)
 
 
 def rotateImage(image, angle):
@@ -75,18 +73,17 @@ for img in fds:
     if re.search('.jpg', img):
         frame_markers = None
         try:
-
             image = cv2.imread(os.path.join(path1, img))
             frame = cv2.resize(image, (905, 1280))
             original = np.copy(frame)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # blur = cv2.GaussianBlur(gray, (3,3), 0)
-
+            blur = cv2.GaussianBlur(gray, (1,1), 0)
+            cv2.imwrite('test.jpg', blur)
             aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
             parameters =  aruco.DetectorParameters_create()
-            corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, dict, parameters=parameters)
+            corners, ids, rejectedImgPoints = aruco.detectMarkers(blur, dict, parameters=parameters)
             frame_markers = aruco.drawDetectedMarkers(original, corners, ids)
-            cv2.imwrite('test.jpg', frame_markers)
+            # cv2.imwrite('test.jpg', frame_markers)
 
 
 
@@ -129,6 +126,8 @@ for img in fds:
             # print(top_right)
 
 
+
+
             ###coords bottom left
             id3 = corners[cornet_id3]
             reg = re.compile('[].[]')
@@ -136,6 +135,7 @@ for img in fds:
             bottom_left1 = int(count.split()[0])
             bottom_left2 = int(count.split()[1])
             bottom_left = (int(bottom_left1), int(bottom_left2))
+
 
 
 
@@ -154,13 +154,7 @@ for img in fds:
             # print('bottom_left', bottom_left)
             # print('bottom_right', bottom_right)
 
-
-
-
-
             pts = [top_left, top_right, bottom_left, bottom_right]
-
-
 
             table = four_point_transform(frame_markers, pts)
             cv2.imwrite((os.path.join(tables, str('table_') + str(a)) + '.jpg'), table)
@@ -170,18 +164,16 @@ for img in fds:
             cv2.imwrite((os.path.join(bonus_box, str('bonus_') + str(b)) + '.jpg'), bonus)
             a += 1
             b += 1
-
-
-
         except Exception as e:
             print(e)
+            print('Marker isnt detect')
             cv2.imwrite((os.path.join(errors, str('errors_') + str(c)) + '.jpg'), frame_markers)
             c += 1
 
 os.remove('markers2.jpg')
 
-rows()
-filtration()
+rows(bonus_box)
+filtration(bonus_box)
 
 #########################################
 #########################################
