@@ -5,7 +5,12 @@ import  matplotlib as mpl
 import numpy as np
 import re
 import os
-from defs import four_point_transform, rotateImage
+from defs import four_point_transform
+from removing_folders import remove
+from rows import rows
+from filtration import filtration
+remove()
+
 
 
 path = r'C:\Users\MVIDEO\PycharmProjects\bonus_sys'
@@ -159,7 +164,9 @@ for img in fds:
 
             table = four_point_transform(frame_markers, pts)
             cv2.imwrite((os.path.join(tables, str('table_') + str(a)) + '.jpg'), table)
-            bonus = table[53:, 608:696]
+            bonus_normal = cv2.resize(table, (830, table.shape[0]))
+            # print(table.shape[0])
+            bonus = bonus_normal[53:, 605:695]
             cv2.imwrite((os.path.join(bonus_box, str('bonus_') + str(b)) + '.jpg'), bonus)
             a += 1
             b += 1
@@ -173,7 +180,8 @@ for img in fds:
 
 os.remove('markers2.jpg')
 
-
+rows()
+filtration()
 
 #########################################
 #########################################
