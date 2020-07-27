@@ -64,8 +64,7 @@ for img in fds:
         frame_markers = None
         try:
             image = cv2.imread(os.path.join(path1, img))
-            img = cv2.resize(image, (905, 1280))
-            frame = ro
+            frame = cv2.resize(image, (905, 1280))
             original = np.copy(frame)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (1, 1), 0)
