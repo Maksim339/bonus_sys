@@ -64,7 +64,8 @@ for img in fds:
         frame_markers = None
         try:
             image = cv2.imread(os.path.join(path1, img))
-            frame = cv2.resize(image, (905, 1280))
+            img = cv2.resize(image, (905, 1280))
+            frame = ro
             original = np.copy(frame)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (1, 1), 0)
@@ -195,7 +196,7 @@ for img in fds:
                 # print(table.shape[0])
                 bonus = bonus_normal[53:, 605:695]
                 cv2.imwrite(
-                    (os.path.join(bonus_box, str("bonus_") + str(b)) + ".jpg"), bonus
+                    (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )
                 a += 1
                 b += 1
