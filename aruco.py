@@ -6,10 +6,10 @@ import numpy as np
 import re
 import os
 from defs import four_point_transform, remove, rows, filtration
+import pathlib
 
-
-path = r"C:\Users\MVIDEO\PycharmProjects\bonus_sys"
-path1 = r"C:\Users\MVIDEO\PycharmProjects\bonus_sys\from"
+path = pathlib.Path('aruco.py').parent.absolute()
+path1 = pathlib.Path('from').absolute()
 fds = os.listdir("from")
 
 
