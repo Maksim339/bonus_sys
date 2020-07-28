@@ -133,13 +133,13 @@ for img in fds:
 
                 table = four_point_transform(frame_markers, pts)
                 # нормирование размеров изображения
-                table_normal = cv2.resize(table, (736, table.shape[0]))
+                table_normal = cv2.resize(table, (829, 842))
                 # сохранение вырезанного куска
                 cv2.imwrite(
-                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table
+                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
                 )
                 first_bon = table_normal[249:319, :90]  # вырезка крайнего левого блока со знач. бонуса
-                second_bon = table_normal[249:310, 370:455]  # вырезка крайнего правого блока со знач. бонуса
+                second_bon = table_normal[249:310, 416:509]  # вырезка крайнего правого блока со знач. бонуса
                 # сохранение блока с бонусом
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
