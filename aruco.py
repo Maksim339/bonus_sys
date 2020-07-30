@@ -7,6 +7,8 @@ import re
 import os
 from defs import four_point_transform, remove, rows, filtration
 import pathlib
+import pdf2image
+
 
 path = pathlib.Path('aruco.py').parent.absolute()
 path1 = pathlib.Path('from').absolute()
@@ -89,7 +91,7 @@ for img in fds:
                 # coord top left
                 id1 = corners[corner_id1]
                 reg = re.compile("[].[]")
-                count = reg.sub("", str(id1[0, 2]))
+                count = reg.sub("", str(id1[0, 3]))
                 top_left1 = int(count.split()[0])
                 top_left2 = int(count.split()[1])
                 top_left = (int(top_left1), int(top_left2))
@@ -97,7 +99,7 @@ for img in fds:
                 # coord top right
                 id2 = corners[corner_id2]
                 reg = re.compile("[].[]")
-                count = reg.sub("", str(id2[0, 3]))
+                count = reg.sub("", str(id2[0, 2]))
                 top_right1 = int(count.split()[0])
                 top_right2 = int(count.split()[1])
                 top_right = (int(top_right1), int(top_right2))
@@ -105,7 +107,7 @@ for img in fds:
                 # coord bottom left
                 id3 = corners[cornet_id3]
                 reg = re.compile("[].[]")
-                count = reg.sub("", str(id3[0, 1]))
+                count = reg.sub("", str(id3[0, 0]))
                 bottom_left1 = int(count.split()[0])
                 bottom_left2 = int(count.split()[1])
                 bottom_left = (int(bottom_left1), int(bottom_left2))
@@ -113,7 +115,7 @@ for img in fds:
                 # coord bottom right
                 id4 = corners[corner_id4]
                 reg = re.compile("[].[]")
-                count = reg.sub("", str(id4[0, 0]))
+                count = reg.sub("", str(id4[0, 1]))
                 bottom_right1 = int(count.split()[0])
                 bottom_right2 = int(count.split()[1])
                 bottom_right = (int(bottom_right1), int(bottom_right2))
@@ -126,10 +128,12 @@ for img in fds:
                 pts = [top_left, top_right, bottom_left, bottom_right]
 
                 table = four_point_transform(frame_markers, pts)
-                table_normal = cv2.resize(table, (785, table.shape[0]))
-                cv2.imwrite(str("table_") + str(a) + ".jpg", table)
-                first_bon = table_normal[:65, :90]
-                second_bon = table_normal[:65, 395:484]
+                table_normal = cv2.resize(table, (827, 837))
+                cv2.imwrite(
+                    (os.path.join(tables, str("table_w_") + str(a)) + ".jpg"), table
+                )
+                first_bon = table_normal[243:297, :85]
+                second_bon = table_normal[240:297, 419:510]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
                     first_bon,
