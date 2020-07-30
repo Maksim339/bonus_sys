@@ -200,11 +200,10 @@ for img in fds:
                 pts = [top_left, top_right, bottom_left, bottom_right]
 
                 table = four_point_transform(frame_markers, pts)
+                bonus_normal = cv2.resize(table, (830, int(table.shape[0])))
                 cv2.imwrite(
-                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table
+                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), bonus_normal
                 )
-                s = int(table.shape[0])
-                bonus_normal = cv2.resize(table, (830, s))
                 # print(table.shape[0])
                 bonus = bonus_normal[63:, 605:691]
                 cv2.imwrite(
