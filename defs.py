@@ -8,7 +8,7 @@ def four_point_transform(image, pts):
     """
     Функция вырезает необходимую область независимо от ориентации избражения
     :param image: изображение в виде numpy массива
-    :param pts: контуры изображение которое надо трансформировать
+    :param pts: контуры изображения, которое надо трансформировать
     :return: вырезанная область в правильной ориентации
     """
     rect = order_points(pts)  # координаты контуров
@@ -87,7 +87,7 @@ def remove(tables, errors, bonus_box):
                 print(e)
 
 
-def filtration(path):
+def filtration(path, a):
     """
     Функция отфильтровывает изображения в директории по параметрам высоты и ширины: не валидные переименовываются
     :param path: путь к директории, в которой необходимо фильтровать изображения
@@ -100,18 +100,25 @@ def filtration(path):
             try:
                 image = cv2.imread(os.path.join(path, img))
                 if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
-                    os.rename(os.path.join(path, img), os.path.join(path, 'invalid.' + str(i) + '.jpg'))
+                    os.remove(os.path.join(path, img))
                     i += 1
-
-
             except Exception as e:
                 print(e)
+
+        # if re.search('work_', img):
+        #     try:
+        #         image = cv2.imread(os.path.join(path, img))
+        #         if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
+        #             os.remove(os.path.join(path, img))
+        #             a += 1
+        #     except Exception as e:
+        #         print(e)
 
 
 def rows(path1):
     """
     Функция ищет горизонтальные линии - строки, обрезает по строкам изображение
-    :param path1:
+    :param path1: путь к директрии, в которой хранятся изображения для обрезки
     """
     fds = os.listdir(path1)
 
@@ -164,6 +171,7 @@ def rows(path1):
                         (os.path.join(path1, str("hundred.") + str(i + a)) + ".jpg"),
                         original[filtered_rows[i] : filtered_rows[i + 1]],
                     )
+                    print((original[i]).shape)
             except IndexError:
                 print("Thats all")
 
@@ -171,3 +179,5 @@ def rows(path1):
 
             if image.shape[0] > 50:
                 os.remove(os.path.join(path1, img))  # удаление строк,  у которых высота больше 50 пикселей
+
+    return a + 1

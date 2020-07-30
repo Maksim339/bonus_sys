@@ -7,17 +7,15 @@ import re
 import os
 from defs import four_point_transform, remove, rows, filtration
 import pathlib
-import pdf2image
 
-
-path = pathlib.Path('aruco.py').parent.absolute()
-path1 = pathlib.Path('from').absolute()
+path = pathlib.Path('aruco.py').parent.absolute()  # путь к проекту
+path1 = pathlib.Path('from').absolute()  # путь к директории, из которой считываются документы
 fds = os.listdir("from")
-
 
 a = 0
 b = 0
 c = 0
+d = None
 
 errors = None
 bonus_box = None
@@ -28,6 +26,9 @@ top_right = None
 bottom_left = None
 bottom_right = None
 
+# создание папок для сохранения вырезанного пространства между маркерами: tables
+# для ошибок: errors
+# для хранения изображений с цифрами : bonus_box
 try:
     tables = os.path.join(path, "for_tables")
     os.mkdir(tables)
@@ -49,7 +50,8 @@ except Exception as e:
 
 remove(tables, errors, bonus_box)
 
-dict = aruco.Dictionary_get(aruco.DICT_6X6_1000)
+# создание словаря для идентификации маркеров
+dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
 fig = plt.figure()
 nx = 4
 ny = 3
@@ -65,20 +67,21 @@ for img in fds:
     if re.search(".jpg", img):
         frame_markers = None
         try:
-            image = cv2.imread(os.path.join(path1, img))
-            frame = cv2.resize(image, (905, 1280))
-            original = np.copy(frame)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            blur = cv2.GaussianBlur(gray, (1, 1), 0)
-            cv2.imwrite("test.jpg", blur)
+            image = cv2.imread(os.path.join(path1, img))  # считывание изобр.
+            frame = cv2.resize(image, (905, 1280))  # приведение к единому размеру
+            original = np.copy(frame)  # сохранение оригинала
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # переведение изобр. в оттенки серого
+            blur = cv2.GaussianBlur(gray, (1, 1), 0)  # размытие изобр, изобр. с парметрами больше (1,1) не распознаются
+            # распознавание маркеров
             aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
             parameters = aruco.DetectorParameters_create()
             corners, ids, rejectedImgPoints = aruco.detectMarkers(
                 blur, dict, parameters=parameters
             )
             frame_markers = aruco.drawDetectedMarkers(original, corners, ids)
-            # cv2.imwrite('test.jpg', frame_markers)
 
+            # работа с переменной ids, которая хранит массив с уникальными id маркеров
+            # присваивание каждому углу правильный id
             reg = re.compile("[] []")
             id_marker = reg.sub("", str(ids)).split()
             corner_id1 = int(id_marker.index("1"))
@@ -86,12 +89,13 @@ for img in fds:
             cornet_id3 = int(id_marker.index("3"))
             corner_id4 = int(id_marker.index("4"))
 
+            # обработка рабочих листов
             if re.search("worker_list", img):
 
                 # coord top left
                 id1 = corners[corner_id1]
                 reg = re.compile("[].[]")
-                count = reg.sub("", str(id1[0, 3]))
+                count = reg.sub("", str(id1[0, 3]))  # берется нужная координата маркера (у каждого маркера 4 коорд.)
                 top_left1 = int(count.split()[0])
                 top_left2 = int(count.split()[1])
                 top_left = (int(top_left1), int(top_left2))
@@ -128,12 +132,15 @@ for img in fds:
                 pts = [top_left, top_right, bottom_left, bottom_right]
 
                 table = four_point_transform(frame_markers, pts)
-                table_normal = cv2.resize(table, (827, 837))
+                # нормирование размеров изображения
+                table_normal = cv2.resize(table, (829, 842))
+                # сохранение вырезанного куска
                 cv2.imwrite(
-                    (os.path.join(tables, str("table_w_") + str(a)) + ".jpg"), table
+                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
                 )
-                first_bon = table_normal[243:297, :85]
-                second_bon = table_normal[240:297, 419:510]
+                first_bon = table_normal[247:297, :90]  # вырезка крайнего левого блока со знач. бонуса
+                second_bon = table_normal[247:297, 423:507]  # вырезка крайнего правого блока со знач. бонуса
+                # сохранение блока с бонусом
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
                     first_bon,
@@ -145,6 +152,7 @@ for img in fds:
                 a += 1
                 b += 1
 
+            # обработка кбс листов
             if re.search("kbs", img):
 
                 # coord top left
@@ -192,12 +200,12 @@ for img in fds:
                 pts = [top_left, top_right, bottom_left, bottom_right]
 
                 table = four_point_transform(frame_markers, pts)
+                bonus_normal = cv2.resize(table, (830, int(table.shape[0])))
                 cv2.imwrite(
-                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table
+                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), bonus_normal
                 )
-                bonus_normal = cv2.resize(table, (830, table.shape[0]))
                 # print(table.shape[0])
-                bonus = bonus_normal[53:, 605:695]
+                bonus = bonus_normal[63:, 605:691]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )
@@ -211,8 +219,8 @@ for img in fds:
             )
             c += 1
 
-os.remove("markers2.jpg")
+os.remove("markers2.jpg")  # удаление словаря маркеров
 
-rows(bonus_box)
+d = rows(bonus_box)
 
-filtration(bonus_box)
+filtration(bonus_box, d)
