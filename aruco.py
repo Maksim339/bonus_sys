@@ -51,7 +51,7 @@ except Exception as e:
 remove(tables, errors, bonus_box)
 
 # создание словаря для идентификации маркеров
-dict = aruco.Dictionary_get(aruco.DICT_6X6_1000)
+dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
 fig = plt.figure()
 nx = 4
 ny = 3
@@ -138,8 +138,8 @@ for img in fds:
                 cv2.imwrite(
                     (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
                 )
-                first_bon = table_normal[249:319, :90]  # вырезка крайнего левого блока со знач. бонуса
-                second_bon = table_normal[249:310, 416:509]  # вырезка крайнего правого блока со знач. бонуса
+                first_bon = table_normal[247:297, :90]  # вырезка крайнего левого блока со знач. бонуса
+                second_bon = table_normal[247:297, 423:507]  # вырезка крайнего правого блока со знач. бонуса
                 # сохранение блока с бонусом
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
@@ -203,9 +203,10 @@ for img in fds:
                 cv2.imwrite(
                     (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table
                 )
-                bonus_normal = cv2.resize(table, (830, table.shape[0]))
+                s = int(table.shape[0])
+                bonus_normal = cv2.resize(table, (830, s))
                 # print(table.shape[0])
-                bonus = bonus_normal[53:, 605:695]
+                bonus = bonus_normal[63:, 605:691]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )
@@ -224,3 +225,7 @@ os.remove("markers2.jpg")  # удаление словаря маркеров
 d = rows(bonus_box)
 
 filtration(bonus_box, d)
+
+
+
+

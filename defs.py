@@ -100,19 +100,19 @@ def filtration(path, a):
             try:
                 image = cv2.imread(os.path.join(path, img))
                 if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
-                    os.rename(os.path.join(path, img), os.path.join(path, 'invalid.' + str(i) + '.jpg'))
+                    os.remove(os.path.join(path, img))
                     i += 1
             except Exception as e:
                 print(e)
 
-        if re.search('work_', img):
-            try:
-                image = cv2.imread(os.path.join(path, img))
-                if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
-                    os.rename(os.path.join(path, img), os.path.join(path, 'hundred.' + str(a) + '.jpg'))
-                    a += 1
-            except Exception as e:
-                print(e)
+        # if re.search('work_', img):
+        #     try:
+        #         image = cv2.imread(os.path.join(path, img))
+        #         if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
+        #             os.remove(os.path.join(path, img))
+        #             a += 1
+        #     except Exception as e:
+        #         print(e)
 
 
 def rows(path1):
