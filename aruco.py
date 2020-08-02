@@ -205,7 +205,7 @@ for img in fds:
                     (os.path.join(tables, str("table_") + str(a)) + ".jpg"), bonus_normal
                 )
                 # print(table.shape[0])
-                bonus = bonus_normal[63:, 605:691]
+                bonus = bonus_normal[63:, 602:685]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )
@@ -224,7 +224,3 @@ os.remove("markers2.jpg")  # удаление словаря маркеров
 d = rows(bonus_box)
 
 filtration(bonus_box, d)
-
-
-
-
