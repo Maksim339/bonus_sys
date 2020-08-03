@@ -208,7 +208,7 @@ for img in fds:
                 )
                 bonus_normal = cv2.resize(table, (830, table.shape[0]))
                 # print(table.shape[0])
-                bonus = bonus_normal[63:, 602:685]
+                bonus = bonus_normal[63:, 602:684]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )
