@@ -12,6 +12,7 @@ path = pathlib.Path('aruco.py').parent.absolute()  # путь к проекту
 path1 = pathlib.Path('from').absolute()  # путь к директории, из которой считываются документы
 fds = os.listdir("from")
 
+
 a = 0
 b = 0
 c = 0
@@ -79,6 +80,7 @@ for img in fds:
                 blur, dict, parameters=parameters
             )
             frame_markers = aruco.drawDetectedMarkers(original, corners, ids)
+            # cv2.imwrite('test.jpg', frame_markers)
 
             # работа с переменной ids, которая хранит массив с уникальными id маркеров
             # присваивание каждому углу правильный id
@@ -204,8 +206,9 @@ for img in fds:
                 cv2.imwrite(
                     (os.path.join(tables, str("table_") + str(a)) + ".jpg"), bonus_normal
                 )
+                bonus_normal = cv2.resize(table, (830, table.shape[0]))
                 # print(table.shape[0])
-                bonus = bonus_normal[63:, 605:691]
+                bonus = bonus_normal[63:, 602:685]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )

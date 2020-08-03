@@ -102,6 +102,8 @@ def filtration(path, a):
                 if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
                     os.remove(os.path.join(path, img))
                     i += 1
+
+
             except Exception as e:
                 print(e)
 
@@ -171,7 +173,6 @@ def rows(path1):
                         (os.path.join(path1, str("hundred.") + str(i + a)) + ".jpg"),
                         original[filtered_rows[i] : filtered_rows[i + 1]],
                     )
-                    print((original[i]).shape)
             except IndexError:
                 print("Thats all")
 
