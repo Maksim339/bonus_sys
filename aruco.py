@@ -7,7 +7,7 @@ import re
 import os
 from defs import four_point_transform, remove, rows, filtration
 import pathlib
-
+from database import database
 path = pathlib.Path('aruco.py').parent.absolute()  # путь к проекту
 path1 = pathlib.Path('from').absolute()  # путь к директории, из которой считываются документы
 fds = os.listdir("from")
@@ -208,7 +208,7 @@ for img in fds:
                 )
                 bonus_normal = cv2.resize(table, (830, table.shape[0]))
                 # print(table.shape[0])
-                bonus = bonus_normal[63:, 602:684]
+                bonus = bonus_normal[63:, 602:683]
                 cv2.imwrite(
                     (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
                 )
@@ -227,3 +227,8 @@ os.remove("markers2.jpg")  # удаление словаря маркеров
 d = rows(bonus_box)
 
 filtration(bonus_box, d)
+
+######## БОТ
+
+######## Подключение к базе
+# database()
