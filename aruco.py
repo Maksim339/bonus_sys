@@ -52,6 +52,23 @@ try:
 except Exception as e:
     print(e)
 
+######## Подключение к базе
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="9f7S39D5!",
+    database="mydatabase",
+)
+
+mycursor = mydb.cursor()
+
+try:
+    mycursor.execute("CREATE TABLE users (user_id VARCHAR(255), file_id VARCHAR(255))")
+    mycursor.execute("CREATE TABLE results (user_id VARCHAR(255), file_id VARCHAR(255), value VARCHAR(10))")
+    mycursor.execute("CREATE TABLE verified (user_id VARCHAR(255), file_id VARCHAR(255), value VARCHAR(10))")
+except Exception as e:
+    print(e)
+
 from database import database
 from database import insert_verified
 
@@ -76,88 +93,92 @@ for folder in fds:
     fds_1 = os.listdir(worker_lists + folder)
     for img in fds_1:
         try:
-            image = cv2.imread(worker_lists + folder + '/' + img)  # считывание изобр.
-            frame = cv2.resize(image, (905, 1280))  # приведение к единому размеру
-            original = np.copy(frame)  # сохранение оригинала
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # переведение изобр. в оттенки серого
-            blur = cv2.GaussianBlur(gray, (1, 1), 0)  # размытие изобр, изобр. с парметрами больше (1,1) не распознаются
-            # распознавание маркеров
-            aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
-            parameters = aruco.DetectorParameters_create()
-            corners, ids, rejectedImgPoints = aruco.detectMarkers(
-                blur, dict, parameters=parameters
-            )
-            frame_markers = aruco.drawDetectedMarkers(original, corners, ids)
-            # cv2.imwrite('test.jpg', frame_markers)
-
-            # работа с переменной ids, которая хранит массив с уникальными id маркеров
-            # присваивание каждому углу правильный id
-            reg = re.compile("[] []")
-            id_marker = reg.sub("", str(ids)).split()
-            corner_id1 = int(id_marker.index("1"))
-            corner_id2 = int(id_marker.index("2"))
-            cornet_id3 = int(id_marker.index("3"))
-            corner_id4 = int(id_marker.index("4"))
-            if not re.search("trial_list", img) and re.search('jpg', img):
-                # coord top left
-                id1 = corners[corner_id1]
-                reg = re.compile("[].[]")
-                count = reg.sub("", str(id1[0, 3]))  # берется нужная координата маркера (у каждого маркера 4 коорд.)
-                top_left1 = int(count.split()[0])
-                top_left2 = int(count.split()[1])
-                top_left = (int(top_left1), int(top_left2))
-
-                # coord top right
-                id2 = corners[corner_id2]
-                reg = re.compile("[].[]")
-                count = reg.sub("", str(id2[0, 2]))
-                top_right1 = int(count.split()[0])
-                top_right2 = int(count.split()[1])
-                top_right = (int(top_right1), int(top_right2))
-
-                # coord bottom left
-                id3 = corners[cornet_id3]
-                reg = re.compile("[].[]")
-                count = reg.sub("", str(id3[0, 0]))
-                bottom_left1 = int(count.split()[0])
-                bottom_left2 = int(count.split()[1])
-                bottom_left = (int(bottom_left1), int(bottom_left2))
-
-                # coord bottom right
-                id4 = corners[corner_id4]
-                reg = re.compile("[].[]")
-                count = reg.sub("", str(id4[0, 1]))
-                bottom_right1 = int(count.split()[0])
-                bottom_right2 = int(count.split()[1])
-                bottom_right = (int(bottom_right1), int(bottom_right2))
-
-                # print('top_left', top_left)
-                # print('top_right', top_right)
-                # print('bottom_left', bottom_left)
-                # print('bottom_right', bottom_right)
-
-                pts = [top_left, top_right, bottom_left, bottom_right]
-
-                table = four_point_transform(frame_markers, pts)
-                # нормирование размеров изображения
-                table_normal = cv2.resize(table, (829, 842))
-                # сохранение вырезанного куска
-                cv2.imwrite(
-                    (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
+            file_id = img.split('.jpg')
+            mycursor.execute("SELECT file_id FROM users")
+            myresult = mycursor.fetchall()
+            if not re.search(str(file_id), str(myresult)):
+                image = cv2.imread(worker_lists + folder + '/' + img)  # считывание изобр.
+                frame = cv2.resize(image, (905, 1280))  # приведение к единому размеру
+                original = np.copy(frame)  # сохранение оригинала
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # переведение изобр. в оттенки серого
+                blur = cv2.GaussianBlur(gray, (1, 1), 0)  # размытие изобр, изобр. с парметрами больше (1,1) не распознаются
+                # распознавание маркеров
+                aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+                parameters = aruco.DetectorParameters_create()
+                corners, ids, rejectedImgPoints = aruco.detectMarkers(
+                    blur, dict, parameters=parameters
                 )
-                first_bon = table_normal[247:297, :90]  # вырезка крайнего левого блока со знач. бонуса
-                second_bon = table_normal[247:297, 423:507]  # вырезка крайнего правого блока со знач. бонуса
-                # сохранение блока с бонусом
-                cv2.imwrite(
-                    (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
-                    first_bon,
-                )
-                cv2.imwrite(
-                    (os.path.join(bonus_box, str("work_b_2_") + str(b)) + ".jpg"),
-                    second_bon,
-                )
-                a += 1
-                b += 1
+                frame_markers = aruco.drawDetectedMarkers(original, corners, ids)
+                # cv2.imwrite('test.jpg', frame_markers)
+
+                # работа с переменной ids, которая хранит массив с уникальными id маркеров
+                # присваивание каждому углу правильный id
+                reg = re.compile("[] []")
+                id_marker = reg.sub("", str(ids)).split()
+                corner_id1 = int(id_marker.index("1"))
+                corner_id2 = int(id_marker.index("2"))
+                cornet_id3 = int(id_marker.index("3"))
+                corner_id4 = int(id_marker.index("4"))
+                if not re.search("trial_list", img) and re.search('jpg', img):
+                    # coord top left
+                    id1 = corners[corner_id1]
+                    reg = re.compile("[].[]")
+                    count = reg.sub("", str(id1[0, 3]))  # берется нужная координата маркера (у каждого маркера 4 коорд.)
+                    top_left1 = int(count.split()[0])
+                    top_left2 = int(count.split()[1])
+                    top_left = (int(top_left1), int(top_left2))
+
+                    # coord top right
+                    id2 = corners[corner_id2]
+                    reg = re.compile("[].[]")
+                    count = reg.sub("", str(id2[0, 2]))
+                    top_right1 = int(count.split()[0])
+                    top_right2 = int(count.split()[1])
+                    top_right = (int(top_right1), int(top_right2))
+
+                    # coord bottom left
+                    id3 = corners[cornet_id3]
+                    reg = re.compile("[].[]")
+                    count = reg.sub("", str(id3[0, 0]))
+                    bottom_left1 = int(count.split()[0])
+                    bottom_left2 = int(count.split()[1])
+                    bottom_left = (int(bottom_left1), int(bottom_left2))
+
+                    # coord bottom right
+                    id4 = corners[corner_id4]
+                    reg = re.compile("[].[]")
+                    count = reg.sub("", str(id4[0, 1]))
+                    bottom_right1 = int(count.split()[0])
+                    bottom_right2 = int(count.split()[1])
+                    bottom_right = (int(bottom_right1), int(bottom_right2))
+
+                    # print('top_left', top_left)
+                    # print('top_right', top_right)
+                    # print('bottom_left', bottom_left)
+                    # print('bottom_right', bottom_right)
+
+                    pts = [top_left, top_right, bottom_left, bottom_right]
+
+                    table = four_point_transform(frame_markers, pts)
+                    # нормирование размеров изображения
+                    table_normal = cv2.resize(table, (829, 842))
+                    # сохранение вырезанного куска
+                    cv2.imwrite(
+                        (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
+                    )
+                    first_bon = table_normal[247:297, :90]  # вырезка крайнего левого блока со знач. бонуса
+                    second_bon = table_normal[247:297, 423:507]  # вырезка крайнего правого блока со знач. бонуса
+                    # сохранение блока с бонусом
+                    cv2.imwrite(
+                        (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
+                        first_bon,
+                    )
+                    cv2.imwrite(
+                        (os.path.join(bonus_box, str("work_b_2_") + str(b)) + ".jpg"),
+                        second_bon,
+                    )
+                    a += 1
+                    b += 1
         except Exception as e:
             print(e)
             print("Marker isnt detect")
@@ -172,7 +193,10 @@ for folder in fds:
     fds_1 = os.listdir(kbs + folder)
     for img in fds_1:
         try:
-            for img in fds_1:
+            file_id = img.split('.jpg')
+            mycursor.execute("SELECT file_id FROM users")
+            myresult = mycursor.fetchall()
+            if not re.search(str(file_id), str(myresult)):
                 image = cv2.imread(kbs + folder + '/' + img)  # считывание изобр.
                 frame = cv2.resize(image, (905, 1280))  # приведение к единому размеру
                 original = np.copy(frame)  # сохранение оригинала
@@ -270,22 +294,7 @@ d = rows(bonus_box)
 filtration(bonus_box, d)
 
 
-######## Подключение к базе
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="9f7S39D5!",
-    database="mydatabase",
-)
 
-mycursor = mydb.cursor()
-
-try:
-    mycursor.execute("CREATE TABLE users (user_id VARCHAR(255), file_id VARCHAR(255))")
-    mycursor.execute("CREATE TABLE results (user_id VARCHAR(255), file_id VARCHAR(255), value VARCHAR(10))")
-    mycursor.execute("CREATE TABLE verified (user_id VARCHAR(255), file_id VARCHAR(255), value VARCHAR(10))")
-except Exception as e:
-    print(e)
 
 
 ######## верифицированная база
