@@ -5,8 +5,8 @@ import pathlib
 import shutil
 import re
 
-path = r'/home/maksim/PycharmProjects/bonus_sys/for_bonus/'
-resultpath = r'/home/maksim/PycharmProjects/bonus_sys/result/'
+path = pathlib.Path('for_bonus').absolute()
+resultpath = pathlib.Path('result').absolute()
 fds = os.listdir(resultpath)
 print(fds)
 mydb = mysql.connector.connect(
@@ -34,33 +34,14 @@ def remove_file(file_id):
     for x in myresult:
         count = x[-1]
         if count > 2:
-            for img in fds:
-                print('fsdfsd')
-                list = []
-                list2 = []
-                img = img.replace('.jpg', '')
-                print(str(img))
-                mycursor.execute("SELECT value, COUNT(*) FROM results WHERE file_id = '" + img + "'GROUP BY value")
-                myresult = mycursor.fetchall()
-                for i in range(len(myresult)):
-                    reg = re.compile("[),'(]")
-                    count = reg.sub("", str(myresult[i]))
-                    counter = int(count.split()[1])
-                    list.append(counter)
-                for i in range(len(myresult)):
-                    list2.append((myresult[i])[0])
-                    print(list2)
-                a = list.index(max(list))
-                print(list2[a])
-
-                sql = "INSERT INTO verified (filename, value) VALUES (%s, %s)"
-                print('zopa')
-                val = (str(img), str(list2[a]))
-                mycursor.execute(sql, val)
+            print('2')
             filename = str(file_id) + '.jpg'
+            print('3')
             shutil.copyfile(path + filename, resultpath + filename)
+            print('4')
             # if os.path.exists(path + filename):
             os.remove(path + filename)
+            print('5')
             sql = "DELETE FROM users WHERE file_id = '{}'".format(file_id)
             mycursor.execute(sql)
             mydb.commit()

@@ -1,4 +1,3 @@
-from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.filters.state import StatesGroup, State
@@ -7,10 +6,9 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils import executor
 import main
 import os
-import json
-import sys
-import result_db
+from database import insert_value
 import pathlib
+
 
 class Test(StatesGroup):
     Q1 = State()
@@ -22,7 +20,7 @@ class Test(StatesGroup):
 bot = Bot(token='1159723951:AAERSFZUMT5m-ngOCm6-aRb7rXzo7xDmqTE', parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
-path = r'/home/maksim/PycharmProjects/bonus_sys/for_bonus/'
+path = pathlib.Path('for_bonus').absolute()
 print(path)
 
 
@@ -51,10 +49,12 @@ async def answer_q1(message: types.Message, state: FSMContext):
                     data["file_id"] = fi
             main.insert_sql(user_id, ops[-1])
             main.remove_file(file_id)
+
             await Test.Q2.set()
         elif ops == 'finish':
             await bot.send_message(user_id, 'На сегодня фото закончились, попробуйте позже оптравить мне "/start"!')
             main.remove_file(file_id)
+
             await Test.Q1.set()
             # await state.finish()
     except:
@@ -71,11 +71,11 @@ async def answer_q2(message: types.Message, state: FSMContext):
         data["user_id"] = user_id
 
     try:
-        result_db.insert_value(user_id=int(data.get('user_id')),
+        insert_value(user_id=int(data.get('user_id')),
                                file_id=str(data.get('file_id')),
                                value=data.get('answer1'))  # Запись в БД формат user_id | file_id | value
     except:
-        result_db.insert_value(user_id=int(data.get('user_id')),
+        insert_value(user_id=int(data.get('user_id')),
                                file_id=str(data.get('file_id')),
                                value='invalid')
     answer1 = data.get('answer1')
@@ -112,11 +112,11 @@ async def answer_q3(message: types.Message, state: FSMContext):
         data["answer1"] = answer
 
     try:
-        result_db.insert_value(user_id=int(data.get('user_id')),
+        insert_value(user_id=int(data.get('user_id')),
                                file_id=str(data.get('file_id')),
                                value=data.get('answer1'))
     except:
-        result_db.insert_value(user_id=int(data.get('user_id')),
+        insert_value(user_id=int(data.get('user_id')),
                                file_id=str(data.get('file_id')),
                                value='invalid')
     await Test.Q3.set()
