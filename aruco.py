@@ -8,13 +8,16 @@ import os
 import mysql.connector
 from defs import four_point_transform, remove, rows, filtration
 import pathlib
+import uuid
 main_path = pathlib.Path('aruco.py').parent.absolute()  # путь к проекту
 
 
+random_name = uuid.uuid1()
 a = 0
 b = 0
 c = 0
 d = None
+img = None
 
 errors = None
 bonus_box = None
@@ -28,11 +31,11 @@ bottom_right = None
 # создание папок для сохранения вырезанного пространства между маркерами: tables
 # для ошибок: errors
 # для хранения изображений с цифрами : bonus_box
-try:
-    tables = os.path.join(main_path, "for_tables")
-    os.mkdir(tables)
-except Exception as e:
-    print(e)
+# try:
+#     tables = os.path.join(main_path, "for_tables")
+#     os.mkdir(tables)
+# except Exception as e:
+#     print(e)
 
 try:
     errors = os.path.join(main_path, "for_errors")
@@ -64,6 +67,7 @@ mycursor = mydb.cursor()
 
 try:
     mycursor.execute("CREATE TABLE users (user_id VARCHAR(255), file_id VARCHAR(255))")
+    mycursor.execute("CREATE TABLE files (file_id VARCHAR(255))")
     mycursor.execute("CREATE TABLE results (user_id VARCHAR(255), file_id VARCHAR(255), value VARCHAR(10))")
     mycursor.execute("CREATE TABLE verified (user_id VARCHAR(255), file_id VARCHAR(255), value VARCHAR(10))")
 except Exception as e:
@@ -93,10 +97,12 @@ for folder in fds:
     fds_1 = os.listdir(worker_lists + folder)
     for img in fds_1:
         try:
-            file_id = img.split('.jpg')
-            mycursor.execute("SELECT file_id FROM users")
+            mycursor.execute("SELECT file_id FROM files")
             myresult = mycursor.fetchall()
-            if not re.search(str(file_id), str(myresult)):
+            if not re.search(str(img), str(myresult)):
+                sql = "INSERT INTO files (file_id) VALUES (%s)"
+                val = (str(img))
+                mycursor.execute(sql, val)
                 image = cv2.imread(worker_lists + folder + '/' + img)  # считывание изобр.
                 frame = cv2.resize(image, (905, 1280))  # приведение к единому размеру
                 original = np.copy(frame)  # сохранение оригинала
@@ -163,18 +169,18 @@ for folder in fds:
                     # нормирование размеров изображения
                     table_normal = cv2.resize(table, (829, 842))
                     # сохранение вырезанного куска
-                    cv2.imwrite(
-                        (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
-                    )
+                    # cv2.imwrite(
+                    #     (os.path.join(tables, str("table_") + str(a)) + ".jpg"), table_normal
+                    # )
                     first_bon = table_normal[247:297, :90]  # вырезка крайнего левого блока со знач. бонуса
                     second_bon = table_normal[247:297, 423:507]  # вырезка крайнего правого блока со знач. бонуса
                     # сохранение блока с бонусом
                     cv2.imwrite(
-                        (os.path.join(bonus_box, str("work_b_1_") + str(b)) + ".jpg"),
+                        (os.path.join(bonus_box, str(img) + '/' + 'w_bon_1' + '/' + str(random_name)) + ".jpg"),
                         first_bon,
                     )
                     cv2.imwrite(
-                        (os.path.join(bonus_box, str("work_b_2_") + str(b)) + ".jpg"),
+                        (os.path.join(bonus_box, str(img) + '/' + 'w_bon_2' + '/' + str(random_name)) + ".jpg"),
                         second_bon,
                     )
                     a += 1
@@ -183,8 +189,7 @@ for folder in fds:
             print(e)
             print("Marker isnt detect")
             cv2.imwrite(
-                (os.path.join(errors, str("errors_") + str(c)) + ".jpg"), frame_markers
-            )
+                os.path.join(errors, str(img) + '/' + 'errors' + '/' + str(random_name)) + ".jpg")
             c += 1
 
 kbs = r'/mnt/storage/nd/kpi/'
@@ -197,6 +202,9 @@ for folder in fds:
             mycursor.execute("SELECT file_id FROM users")
             myresult = mycursor.fetchall()
             if not re.search(str(file_id), str(myresult)):
+                sql = "INSERT INTO files (file_id) VALUES (%s)"
+                val = (str(img))
+                mycursor.execute(sql, val)
                 image = cv2.imread(kbs + folder + '/' + img)  # считывание изобр.
                 frame = cv2.resize(image, (905, 1280))  # приведение к единому размеру
                 original = np.copy(frame)  # сохранение оригинала
