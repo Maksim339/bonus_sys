@@ -189,7 +189,7 @@ for folder in fds:
             print(e)
             print("Marker isnt detect")
             cv2.imwrite(
-                os.path.join(errors, str(img) + '/' + 'errors' + '/' + str(random_name)) + ".jpg")
+                (os.path.join(errors, str(img) + '/' + 'errors' + '/' + str(random_name)) + ".jpg"))
             c += 1
 
 kbs = r'/mnt/storage/nd/kpi/'
@@ -276,14 +276,15 @@ for folder in fds:
 
                     table = four_point_transform(frame_markers, pts)
                     bonus_normal = cv2.resize(table, (830, int(table.shape[0])))
-                    cv2.imwrite(
-                        (os.path.join(tables, str("table_") + str(a)) + ".jpg"), bonus_normal
-                    )
-                    bonus_normal = cv2.resize(table, (830, table.shape[0]))
+                    # cv2.imwrite(
+                    #     (os.path.join(tables, str("table_") + str(a)) + ".jpg"), bonus_normal
+                    # )
+                    # bonus_normal = cv2.resize(table, (830, table.shape[0]))
                     # print(table.shape[0])
                     bonus = bonus_normal[63:, 602:683]
                     cv2.imwrite(
-                        (os.path.join(bonus_box, str("bonus_1_") + str(b)) + ".jpg"), bonus
+                        (os.path.join(bonus_box, str(img) + '/' + 'kbs_bonus' + '/' + str(random_name)) + ".jpg"),
+                        bonus,
                     )
                     a += 1
                     b += 1
@@ -291,8 +292,10 @@ for folder in fds:
             print(e)
             print("Marker isnt detect")
             cv2.imwrite(
-                (os.path.join(errors, str("errors_") + str(c)) + ".jpg"), frame_markers
+                (os.path.join(errors, str(img) + '/' + 'errors' + '/' + str(random_name)) + ".jpg"),
+                frame_markers,
             )
+
             c += 1
 
 os.remove("markers2.jpg")  # удаление словаря маркеров
