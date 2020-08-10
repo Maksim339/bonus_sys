@@ -5,8 +5,8 @@ import pathlib
 import shutil
 import re
 
-path = pathlib.Path('for_bonus').absolute()
-resultpath = pathlib.Path('result').absolute()
+path = r'/home/maksim/PycharmProjects/bonus_sys/for_bonus/'
+resultpath = r'/home/maksim/PycharmProjects/bonus_sys/result/'
 fds = os.listdir(resultpath)
 print(fds)
 mydb = mysql.connector.connect(

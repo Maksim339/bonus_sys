@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import os
 import re
-
+import uuid
+random_name = uuid.uuid1()
 
 def four_point_transform(image, pts):
     """
@@ -96,7 +97,7 @@ def filtration(path, a):
     fds2 = os.listdir(path)
 
     for img in fds2:
-        if re.search("hundred", img):
+        if re.search("box", img):
             try:
                 image = cv2.imread(os.path.join(path, img))
                 if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
@@ -107,14 +108,14 @@ def filtration(path, a):
             except Exception as e:
                 print(e)
 
-        # if re.search('work_', img):
-        #     try:
-        #         image = cv2.imread(os.path.join(path, img))
-        #         if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
-        #             os.remove(os.path.join(path, img))
-        #             a += 1
-        #     except Exception as e:
-        #         print(e)
+        if re.search('work_', img):
+            try:
+                image = cv2.imread(os.path.join(path, img))
+                if image.shape[0] > 50 or image.shape[0] < 40:  # параметры высоты изображения, image.shape =  тип tuple
+                    os.remove(os.path.join(path, img))
+                    a += 1
+            except Exception as e:
+                print(e)
 
 
 def rows(path1):
@@ -170,7 +171,7 @@ def rows(path1):
             try:
                 for i in np.arange(len(filtered_rows) - 1):
                     cv2.imwrite(
-                        (os.path.join(path1, str("hundred.") + str(i + a)) + ".jpg"),
+                        (os.path.join(path1, str("box__") + str(random_name) + str(i + a)) + ".jpg"),
                         original[filtered_rows[i] : filtered_rows[i + 1]],
                     )
             except IndexError:

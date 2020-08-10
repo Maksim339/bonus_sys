@@ -2,9 +2,9 @@ import mysql.connector
 import re
 import os
 import pathlib
+import pygments
 
-
-result = pathlib.Path('result').absolute()
+result = r'/home/maksim/PycharmProjects/bonus_sys/result/'
 fds = os.listdir(result)
 
 
@@ -120,7 +120,7 @@ def database():
 
 def insert_value(user_id, file_id, value):
     try:
-        if len(str(value)) > 3 or str(value) == '000':
+        if len(str(value)) > 3 or str(value) == '000' or int(value) > 100:
             value = 'invalid'
         print(int(value))
     except ValueError:
@@ -132,6 +132,7 @@ def insert_value(user_id, file_id, value):
 
     sql = "INSERT INTO results (user_id, file_id, value) VALUES (%s, %s, %s)"
     try:
+        valid = int(value)
         val = (user_id, file_id, int(value))
     except ValueError:
         val = (user_id, file_id, value)
