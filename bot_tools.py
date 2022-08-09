@@ -12,7 +12,7 @@ print(fds)
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="9f7S39D5!",
+    password="",
     database="mydatabase",
     port='3306'
 )
