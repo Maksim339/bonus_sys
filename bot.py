@@ -18,7 +18,7 @@ try:
         Q4 = State()
 
 
-    bot = Bot(token='1159723951:AAERSFZUMT5m-ngOCm6-aRb7rXzo7xDmqTE', parse_mode=types.ParseMode.HTML)
+    bot = Bot(token='', parse_mode=types.ParseMode.HTML)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     path = r'/home/maksim/PycharmProjects/bonus_sys/for_bonus/'
